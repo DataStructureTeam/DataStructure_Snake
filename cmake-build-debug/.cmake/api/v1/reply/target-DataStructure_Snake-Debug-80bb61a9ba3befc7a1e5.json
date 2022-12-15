@@ -48,7 +48,7 @@
 					"fragment" : "-g -fdiagnostics-color=always"
 				},
 				{
-					"fragment" : "-std=gnu++14"
+					"fragment" : "-std=gnu++11"
 				}
 			],
 			"includes" : 
@@ -65,7 +65,7 @@
 				[
 					1
 				],
-				"standard" : "14"
+				"standard" : "11"
 			},
 			"sourceIndexes" : 
 			[

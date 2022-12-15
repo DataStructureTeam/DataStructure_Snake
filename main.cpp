@@ -1,12 +1,20 @@
-#include<bits/stdc++.h>
+//#include <bits/stdc++.h>
+#include <windows.h>
+#include <cstdlib>
+#include <conio.h>
+#include <ctime>
+#include <cstring>
+#include <cstdio>
+#include <iostream>
 
+#define  N 22
 using namespace std;
 
 
-int main() {
-    cout << "DataStructure_Snake" << endl;
-    return 0;
-}
+//int main() {
+//    cout << "DataStructure_Snake" << endl;
+//    return 0;
+//}
 
 /*李锡堃的小组任务3:
  * 让蛇动起来:
@@ -17,6 +25,72 @@ int main() {
 
 
 /*韩帅恒*/
+int gameover;
+
+int x1, y1; // 随机出米
+
+int x, y;
+
+long start;
+
+//=======================================
+//类的实现与应用initialize
+//=======================================
+
+//下面定义贪吃蛇的坐标类
+class snake_position {
+public:
+
+    int x, y;      //x表示行，y表示列
+
+    snake_position() {};
+
+    void initialize(int &);//坐标初始化
+
+
+};
+
+snake_position position[(N - 2) * (N - 2) + 1]; //定义贪吃蛇坐标类数组，有(N-2)*(N-2)个坐标
+
+void snake_position::initialize(int &j) {
+    x = 1;
+
+    y = j;
+}
+
+
+//下面定义贪吃蛇的棋盘图
+
+class snake_map {
+
+private:
+
+    char s[N][N];//定义贪吃蛇棋盘，包括墙壁。
+
+    int grade, length;
+
+    int gamespeed; //前进时间间隔
+
+    char direction; // 初始情况下，向右运动
+
+    int head, tail;
+
+    int score;
+
+    bool gameauto;
+
+public:
+
+    snake_map(int h = 4, int t = 1, int l = 4, char d = 77, int s = 0) : length(l), direction(d), head(h), tail(t),
+                                                                         score(s) {}
+
+    int updata_game();
+
+    void setpoint();
+
+};
+
+//随机产生米
 void snake_map::setpoint() {
     srand(time(0));
 
@@ -80,6 +154,7 @@ int snake_map::updata_game() {
             y = position[head].y + 1; // 向右
 
     }
+
     if (!(direction == 72 || direction == 80 || direction == 75 || direction == 77))   // 按键非方向键
 
         gameover = 0;
