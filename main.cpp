@@ -23,6 +23,188 @@ using namespace std;
  *      3.控制方向
  *      4.调整（倍率，边界等）*/
 
+/*谭裕仁*/
+//游戏界面标记 包括空、墙、食物、蛇头、蛇身
+#define KONG 0 
+#define WALL 1 
+#define FOOD 2 
+#define HEAD 3 
+#define BODY 4 
+
+//方向键上下左右 暂停 退出
+#define UP 72 
+#define DOWN 80 
+#define LEFT 75 
+#define RIGHT 77 
+#define SPACE 32 
+#define ESC 27 
+
+void HideCursor();
+
+void CursorJump(int x, int y);
+
+void InitInterface();
+
+void color(int c);
+
+void ReadGrade();
+
+void WriteGrade();
+
+void InitSnake();
+
+void RandFood();
+
+void JudgeFunc(int x, int y);
+
+void DrawSnake(int flag);
+
+void MoveSnake(int x, int y);
+
+void run(int x, int y);
+
+void Game();
+
+
+int max, grade; 
+int main()
+{
+#pragma warning (disable:4996) 
+	max = 0, grade = 0; 
+	system("title 贪吃蛇"); 
+	system("mode con cols=84 lines=23"); 
+	HideCursor(); 
+	ReadGrade(); 
+	InitInterface(); 
+	InitSnake(); 
+	srand((unsigned int)time(NULL)); 
+	RandFood(); 
+	DrawSnake(1); 
+	Game(); 
+	return 0;
+}
+
+void HideCursor()
+{
+	CONSOLE_CURSOR_INFO curInfo; 
+	curInfo.dwSize = 1; 
+	curInfo.bVisible = FALSE; 
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE); 
+	SetConsoleCursorInfo(handle, &curInfo); 
+}
+
+void CursorJump(int x, int y)
+{
+	COORD pos; 
+	pos.X = x; 
+	pos.Y = y; 
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE); 
+	SetConsoleCursorPosition(handle, pos); 
+}
+//初始化界面
+void InitInterface()
+{
+	color(6); 
+	for (int i = 0; i < ROW; i++)
+	{
+		for (int j = 0; j < COL; j++)
+		{
+			if (j == 0 || j == COL - 1)
+			{
+				face[i][j] = WALL; 
+				CursorJump(2 * j, i);
+				printf("■");
+			}
+			else if (i == 0 || i == ROW - 1)
+			{
+				face[i][j] = WALL; 
+				printf("■");
+			}
+			else
+			{
+				face[i][j] = KONG; 
+			}
+		}
+	}
+	color(7); 
+	CursorJump(0, ROW);
+	printf("当前得分:%d", grade);
+	CursorJump(COL, ROW);
+	printf("历史最高得分:%d", max);
+}
+//颜色设置
+void color(int c)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), c); 
+	
+}
+
+void ReadGrade()
+{
+	FILE* pf = fopen("贪吃蛇最高得分记录.txt", "r"); 
+	if (pf == NULL) 
+		pf = fopen("贪吃蛇最高得分记录.txt", "w"); 
+		fwrite(&max, sizeof(int), 1, pf); 
+	}
+	fseek(pf, 0, SEEK_SET); 
+	fread(&max, sizeof(int), 1, pf); 
+	fclose(pf); 
+	pf = NULL; 
+}
+
+void WriteGrade()
+{
+	FILE* pf = fopen("贪吃蛇最高得分记录.txt", "w"); 
+	if (pf == NULL) 
+	{
+		printf("保存最高得分记录失败\n");
+		exit(0);
+	}
+	fwrite(&grade, sizeof(int), 1, pf); 
+	fclose(pf); 
+	pf = NULL; 
+}
+
+//创建食物
+void RandFood()
+{
+	int i, j;
+	do
+	{
+		
+		i = rand() % ROW;
+		j = rand() % COL;
+	} while (face[i][j] != KONG); 
+	face[i][j] = FOOD; 
+	color(12); 
+	CursorJump(2 * j, i); 
+	printf("●");
+}
+
+//打印蛇与覆盖蛇
+void DrawSnake(int flag)
+{
+	if (flag == 1) 
+	{
+		color(10); 
+		CursorJump(2 * snake.x, snake.y);
+		printf("■"); 
+		for (int i = 0; i < snake.len; i++)
+		{
+			CursorJump(2 * body[i].x, body[i].y);
+			printf("□"); 
+		}
+	}
+	else 
+	{
+		if (body[snake.len - 1].x != 0) 
+		{
+			
+			CursorJump(2 * body[snake.len - 1].x, body[snake.len - 1].y);
+			printf("  ");
+		}
+	}
+}
 
 /*韩帅恒*/
 int gameover;
