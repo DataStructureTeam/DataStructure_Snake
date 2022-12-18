@@ -24,6 +24,13 @@ int times = 1;
 using namespace std;
 
 
+
+typedef struct Snakebody
+{
+    int x, y;     //身体的坐标
+    struct Snakebody *next;    //结构指针
+}Snakebody;      //创建保持身体的链表
+
 //int main() {
 //    cout << "DataStructure_Snake" << endl;
 //    return 0;
