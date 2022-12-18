@@ -24,12 +24,64 @@ int times = 1;
 using namespace std;
 
 
-
 typedef struct Snakebody
 {
     int x, y;     //身体的坐标
     struct Snakebody *next;    //结构指针
 }Snakebody;      //创建保持身体的链表
+
+void Front();                   //游戏开始页面
+void MoveCursor(int x, int y); //移动光标
+void ISnake();     //初始化蛇身
+Snakebody *Pbady = NULL;  //创建节点
+Snakebody *Phead = NULL;  //存储着整个蛇身
+Snakebody *Phead_1 = NULL;  //指向蛇身
+Snakebody *end = NULL;   //尾节点
+
+
+void MoveCursor(int x, int y)//设置光标位置(就是输出显示的开始位置)
+{
+    COORD pos = { x * 2,y };
+    HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);//获得 标准输出的句柄
+    SetConsoleCursorPosition(output, pos); //设置控制台光标位置
+}
+
+void Front()
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE);//设置红色和蓝色相加
+    MoveCursor(18, 15);
+    printf("请等待......");
+    for (int i = 0; i <= 3000000000; i++) {}
+    system("cls");
+}
+
+void ISnake()
+{
+    for (int i = 0; i < 5; i++)
+    {
+        Pbady = (Snakebody*)malloc(sizeof(Snakebody));
+        Pbady->x = 5 - i;
+        Pbady->y = 5;
+        if (Phead == NULL)
+        {
+            Phead = Pbady;
+        }
+        else
+        {
+            end->next = Pbady;
+        }
+        Pbady->next = NULL;
+        end = Pbady;
+    }
+    Phead_1 = Phead;
+    while (Phead_1->next != NULL)
+    {
+        MoveCursor(Phead_1->x, Phead_1->y);
+            Phead_1 = Phead_1->next;
+    }
+}
+
+
 
 //int main() {
 //    cout << "DataStructure_Snake" << endl;
