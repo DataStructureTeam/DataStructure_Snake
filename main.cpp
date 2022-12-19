@@ -6,6 +6,7 @@
 #include <cstring>
 #include <cstdio>
 #include <iostream>
+#include <cmath>
 
 #define  N 22
 # define de_lenth 5//蛇初始长度
@@ -24,11 +25,10 @@ int times = 1;
 using namespace std;
 
 
-typedef struct Snakebody
-{
+typedef struct Snakebody {
     int x, y;     //身体的坐标
     struct Snakebody *next;    //结构指针
-}Snakebody;      //创建保持身体的链表
+} Snakebody;      //创建保持身体的链表
 
 void Front();                   //游戏开始页面
 void MoveCursor(int x, int y); //移动光标
@@ -41,43 +41,37 @@ Snakebody *end = NULL;   //尾节点
 
 void MoveCursor(int x, int y)//设置光标位置(就是输出显示的开始位置)
 {
-    COORD pos = { x * 2,y };
+    COORD pos = {x * 2, y};
     HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);//获得 标准输出的句柄
     SetConsoleCursorPosition(output, pos); //设置控制台光标位置
 }
 
-void Front()
-{
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE);//设置红色和蓝色相加
+void Front() {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+                            FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE);//设置红色和蓝色相加
     MoveCursor(18, 15);
     printf("请等待......");
     for (int i = 0; i <= 3000000000; i++) {}
     system("cls");
 }
 
-void ISnake()
-{
-    for (int i = 0; i < 5; i++)
-    {
-        Pbady = (Snakebody*)malloc(sizeof(Snakebody));
+void ISnake() {
+    for (int i = 0; i < 5; i++) {
+        Pbady = (Snakebody *) malloc(sizeof(Snakebody));
         Pbady->x = 5 - i;
         Pbady->y = 5;
-        if (Phead == NULL)
-        {
+        if (Phead == NULL) {
             Phead = Pbady;
-        }
-        else
-        {
+        } else {
             end->next = Pbady;
         }
         Pbady->next = NULL;
         end = Pbady;
     }
     Phead_1 = Phead;
-    while (Phead_1->next != NULL)
-    {
+    while (Phead_1->next != NULL) {
         MoveCursor(Phead_1->x, Phead_1->y);
-            Phead_1 = Phead_1->next;
+        Phead_1 = Phead_1->next;
     }
 }
 
@@ -94,9 +88,15 @@ void ISnake()
  *      2.蛇的方向
  *      3.控制方向
  *      4.调整（倍率，边界等）*/
-
+int JudgeWall();//判断蛇是否撞墙
+void TraverseMap(char map[ROW_MAX][LINE_MAX], int snake[ROW_MAX][LINE_MAX]);//输出地图以及蛇的全部
+int EatFood(char map[ROW_MAX][LINE_MAX]);//蛇吃到食物的操作
+void CreateFood(char map[ROW_MAX][LINE_MAX], int snake[ROW_MAX][LINE_MAX]);//产生随机食物
+void gotoxy(int x, int y);//将光标定位到某一位置, 用于显示结果, 以及暂停是使用
 void MoveTail(int snake[ROW_MAX][LINE_MAX]);//蛇尾部的移动
 void run(char map[ROW_MAX][LINE_MAX], int snake[ROW_MAX][LINE_MAX]);//蛇的移动
+void dely();
+
 
 void MoveTail(int snake[ROW_MAX][LINE_MAX]) {
 
@@ -283,7 +283,68 @@ void run(char map[ROW_MAX][LINE_MAX], int snake[ROW_MAX][LINE_MAX]) {
     }
 }
 
+int JudgeWall(void) {
 
+    if ((Head_x == 0 || Head_x == ROW - 1) || (Head_y == 0 || Head_y == LINE - 1))
+        return 0;
+    else
+        return 1;
+}
+
+void TraverseMap(char map[ROW_MAX][LINE_MAX], int snake[ROW_MAX][LINE_MAX]) {
+
+    int i, j;
+
+    for (i = 0; i < ROW; ++i) {
+        for (j = 0; j < LINE; ++j) {
+            if (snake[i][j] == 0)
+                printf("%c", map[i][j]);
+            else {
+                if (snake[i][j] == Head_v)
+                    putchar('Q');
+                else
+                    putchar('a');
+            }
+        }
+        putchar('\n');
+    }
+}
+int EatFood(char map[ROW_MAX][LINE_MAX]) {
+
+    if (map[Head_x][Head_y] == 'O') {
+
+        map[Head_x][Head_y] = 0;
+        count++;
+        return 0;
+    } else
+        return 1;
+}
+void CreateFood(char map[ROW_MAX][LINE_MAX], int snake[ROW_MAX][LINE_MAX]) {
+
+    int food_x = 0;
+    int food_y = 0;
+
+    while (map[food_x][food_y] == '#' || snake[food_x][food_y] != 0) {
+
+        food_x = rand() % (ROW - 3) + 1;
+        food_y = rand() % (LINE - 3) + 1;
+    }
+
+    map[food_x][food_y] = 'O';
+}
+void gotoxy(int x, int y) {
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+    HANDLE hConsoleOut;
+    hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(hConsoleOut, &csbiInfo);
+    csbiInfo.dwCursorPosition.X = x;
+    csbiInfo.dwCursorPosition.Y = y;
+    SetConsoleCursorPosition(hConsoleOut, csbiInfo.dwCursorPosition);
+}
+void dely() {
+
+    for (long i = 0; i <= pow(16, times); ++i);
+}
 
 /*谭裕仁*/
 //游戏界面标记 包括空、墙、食物、蛇头、蛇身
